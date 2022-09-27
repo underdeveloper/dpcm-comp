@@ -8,9 +8,9 @@ PREDICTOR_ORDER = 1
 def main():
     # Autocorrelation figure
     M = SAMPLE_SIZE
-    N = 2
+    N = 1
     x = sample_data2
-    Rxx = [0]*(N+1)
+    Rxx = [0.0]*(N+1)
 
     for k in range(0, N+1):
         sum = 0
@@ -31,9 +31,21 @@ def main():
     print("Jadi, predictor berupa:")
     for _ in range(0,N):
         print(format(coef[_],'.4f')+"*x[n-"+str(_+1)+"]", end='')
+    print()
     
     # Gain:
-    print()
+    mu = FindDiff(x, coef)
+    gain = PGain(x, mu, M)
+    print(gain)
+
+def FindDiff(sample, coef):
+    size = len(sample) # Sample size
+    order = len(coef) # Order of coding
+    diff = [0.0] * size
+    for i in range(0, size):
+        for j in range(0, order):
+            diff[i] += coef[j]*sample[i-(j+1) if i-(j+1) >= 0 else i] # NO IDEA
+    return diff
 
 def PGain(pixel, diff, M=SAMPLE_SIZE):
     sumPixSq = 0
