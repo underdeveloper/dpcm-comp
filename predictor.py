@@ -2,7 +2,7 @@ import numpy as np
 
 SAMPLE1 = [4,6,6,5,7,4,5,3,8,9,2,11,1,9,4,8,8,8,6,10,3,12,2,7,2,7,1,5,4,7,7,7,7,8,8,8,9,9,9,5] # wanted
 SAMPLE2 = [5,6,5,6,5,7,4,8,3,9,2,10,1,9,2,8,6,6,6,10,1,10,1,6,1,6,1,3,5,7,9] # example
-PREDICTOR_ORDER = 1
+PREDICTOR_ORDER = 3
 
 def main():
 
@@ -32,7 +32,7 @@ def main():
     # Predictor output display:
     print("Jadi, predictor berupa:")
     for _ in range(0,N):
-        print(format(coef[_],'.4f')+"*x[n-"+str(_+1)+"]", end='')
+        print(format(coef[_],'.4f')+"*x[n-"+str(_+1)+"]", end=' + ' if _ < N-1 else '')
     print()
     
     # Predictor Gain output display:
@@ -69,4 +69,3 @@ def PGain(pixel, diff):
 
 if __name__ == "__main__":
     main()
-
