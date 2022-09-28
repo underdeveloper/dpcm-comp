@@ -6,10 +6,12 @@ sample_data2 = [5,6,5,6,5,7,4,8,3,9,2,10,1,9,2,8,6,6,6,10,1,10,1,6,1,6,1,3,5,7,9
 PREDICTOR_ORDER = 1
 
 def main():
-    # Autocorrelation figure
+
     M = SAMPLE_SIZE
-    N = 1
+    N = 2
     x = sample_data2
+
+    # Finding autocorellation figures
     Rxx = [0.0]*(N+1)
 
     for k in range(0, N+1):
@@ -18,7 +20,7 @@ def main():
             sum += (x[i] * x[i+k])
         Rxx[k] = (1/(M-k))*sum
     
-    # I GIVE UP
+    # Creating linear equations to solve for coefficients
     a = []
     b = []
     for k in range(1,N+1):
@@ -27,14 +29,15 @@ def main():
     
     coef = np.linalg.solve(a,b)
 
-    # Predictor:
+    # Predictor output display:
     print("Jadi, predictor berupa:")
     for _ in range(0,N):
         print(format(coef[_],'.4f')+"*x[n-"+str(_+1)+"]", end='')
     print()
     
-    # Gain:
+    # Predictor Gain output display:
     mu = FindDiff(x, coef)
+    # print(mu)
     gain = PGain(x, mu, M)
     print(gain)
 
@@ -44,16 +47,23 @@ def FindDiff(sample, coef):
     diff = [0.0] * size
     for i in range(0, size):
         for j in range(0, order):
-            diff[i] += coef[j]*sample[i-(j+1) if i-(j+1) >= 0 else i] # NO IDEA
+            diff[i] += coef[j]*sample[i-(j+1) if i > j+1 else 0]
+
+    print("[",end='')
+    for alpha in diff:
+        print(round(alpha, 4),end=' ')
+    print("] with length of", len(diff))
+
     return diff
 
 def PGain(pixel, diff, M=SAMPLE_SIZE):
+    # pixel and diff must have length M
     sumPixSq = 0
     sumPixDiff = 0
-    for _ in range(0,M-1):
+    for _ in range(0,M):
         sumPixSq += (pixel[_]) ** 2
         sumPixDiff += (pixel[_] - diff[_]) ** 2
-    return 10*np.log10(sumPixSq/sumPixDiff)
+    return 10*(np.log10(sumPixSq/sumPixDiff))
 
 if __name__ == "__main__":
     main()
